@@ -1,10 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <json/json.h> // Incluye la librería JSON para C++
+#include <filesystem>
+#include "libs/json.hpp"
 #include "ListaCircularDoble.h"
 #include "Cola.h"
 #include "Pila.h"
+#include "Pasajero.h"
+#include "Avion.h"
+
+using json = nlohmann::json;
 
 ListaCircularDoble listaDisponibles;
 ListaCircularDoble listaMantenimiento;
@@ -13,15 +18,24 @@ Pila pilaEquipajes;
 
 void cargarAviones(const std::string& archivo) {
     std::ifstream ifs(archivo);
-    Json::Reader reader;
-    Json::Value obj;
-    reader.parse(ifs, obj);
-    
-    for (auto& avion : obj["aviones"]) {
+    if (!ifs.is_open()) {
+        std::cerr << "Error opening file: " << archivo << std::endl;
+        return;
+    }
+    json obj;
+    ifs >> obj; 
+
+    for (const auto& avion : obj) {
         Avion* nuevoAvion = new Avion(
-            avion["codigo"].asString(),
-            avion["modelo"].asString(),
-            avion["estado"].asString()
+            avion["vuelo"].get<std::string>(),
+            avion["numero_de_registro"].get<std::string>(),
+            avion["modelo"].get<std::string>(),
+            avion["fabricante"].get<std::string>(),
+            avion["ano_fabricacion"].get<int>(), // Changed from "ano_fabricante" to "ano_fabricacion"
+            avion["capacidad"].get<int>(),
+            avion["peso_max_despegue"].get<int>(),
+            avion["aerolinea"].get<std::string>(),
+            avion["estado"].get<std::string>()
         );
         if (nuevoAvion->estado == "Disponible") {
             listaDisponibles.insertar(nuevoAvion);
@@ -33,16 +47,23 @@ void cargarAviones(const std::string& archivo) {
 
 void cargarPasajeros(const std::string& archivo) {
     std::ifstream ifs(archivo);
-    Json::Reader reader;
-    Json::Value obj;
-    reader.parse(ifs, obj);
-    
-    for (auto& pasajero : obj["pasajeros"]) {
+    if (!ifs.is_open()) {
+        std::cerr << "Error opening file: " << archivo << std::endl;
+        return;
+    }
+    json obj;
+    ifs >> obj;
+
+    for (const auto& pasajero : obj["pasajeros"]) {
         Pasajero* nuevoPasajero = new Pasajero(
-            pasajero["nombre"].asString(),
-            pasajero["pasaporte"].asString(),
-            pasajero["vuelo"].asString(),
-            pasajero["asiento"].asInt()
+            pasajero["nombre"].get<std::string>(),
+            pasajero["nacionalidad"].get<std::string>(),
+            pasajero["numero_de_pasaporte"].get<std::string>(),
+            pasajero["vuelo"].get<std::string>(),
+            pasajero["asiento"].get<int>(),
+            pasajero["destino"].get<std::string>(),
+            pasajero["origen"].get<std::string>(),
+            pasajero["equipaje_facturado"].get<int>()
         );
         colaPasajeros.encolar(nuevoPasajero);
     }
@@ -64,12 +85,14 @@ int main() {
     while (true) {
         mostrarMenu();
         std::cin >> opcion;
+        std::string archivo_prueba;
 
         switch (opcion) {
             case 1:
                 std::cout << "Ingrese el nombre del archivo de aviones: ";
                 std::cin >> archivo;
-                cargarAviones(archivo);
+                archivo_prueba = "C:\\Proyectos\\U\\EDD\\practica1\\archivos_prueba\\aviones.json";
+                cargarAviones(archivo_prueba);
                 break;
             case 2:
                 std::cout << "Ingrese el nombre del archivo de pasajeros: ";
