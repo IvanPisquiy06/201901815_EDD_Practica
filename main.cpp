@@ -31,7 +31,7 @@ void cargarAviones(const std::string& archivo) {
             avion["numero_de_registro"].get<std::string>(),
             avion["modelo"].get<std::string>(),
             avion["fabricante"].get<std::string>(),
-            avion["ano_fabricacion"].get<int>(), // Changed from "ano_fabricante" to "ano_fabricacion"
+            avion["ano_fabricacion"].get<int>(),
             avion["capacidad"].get<int>(),
             avion["peso_max_despegue"].get<int>(),
             avion["aerolinea"].get<std::string>(),
@@ -91,13 +91,14 @@ int main() {
             case 1:
                 std::cout << "Ingrese el nombre del archivo de aviones: ";
                 std::cin >> archivo;
-                archivo_prueba = "C:\\Proyectos\\U\\EDD\\practica1\\archivos_prueba\\aviones.json";
+                archivo_prueba = "C:\\Proyectos\\U\\EDD\\practica\\archivos_prueba\\aviones.json";
                 cargarAviones(archivo_prueba);
                 break;
             case 2:
                 std::cout << "Ingrese el nombre del archivo de pasajeros: ";
                 std::cin >> archivo;
-                cargarPasajeros(archivo);
+                archivo_prueba = "C:\\Proyectos\\U\\EDD\\practica\\archivos_prueba\\pasajeros.json";
+                cargarPasajeros(archivo_prueba);
                 break;
             case 3:
                 std::cout << "Aviones disponibles:" << std::endl;

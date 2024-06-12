@@ -1,30 +1,61 @@
-#ifndef COLA_H
-#define COLA_H
+#ifndef PASAJEROS_H
+#define PASAJEROS_H
 
+#include "Nodo.h"
 #include "Pasajero.h"
-#include <queue>
+#include <stdexcept>
 
 class Cola {
 private:
-    std::queue<Pasajero*> cola;
+    Nodo* front;
+    Nodo* rear;
+    int size;
 
 public:
+    Cola() : front(nullptr), rear(nullptr), size(0) {}
+
+    bool estaVacia() const {
+        return size == 0;
+    }
+
     void encolar(Pasajero* pasajero) {
-        cola.push(pasajero);
+        Nodo* newNode = new Nodo(static_cast<void*>(pasajero));
+        if (rear == nullptr) {
+            front = rear = newNode;
+        } else {
+            rear->setSiguiente(newNode);
+            rear = newNode;
+        }
+        size++;
     }
 
     Pasajero* desencolar() {
-        if (cola.empty()) {
-            return nullptr;
+        if (estaVacia()) {
+            throw std::out_of_range("Queue is empty");
         }
-        Pasajero* pasajero = cola.front();
-        cola.pop();
+        Nodo* temp = front;
+        Pasajero* pasajero = static_cast<Pasajero*>(front->getDato());
+        front = front->getSiguiente();
+        if (front == nullptr) {
+            rear = nullptr;
+        }
+        delete temp;
+        size--;
         return pasajero;
     }
 
-    bool estaVacia() {
-        return cola.empty();
+    Pasajero* peekFront() const {
+        if (estaVacia()) {
+            throw std::out_of_range("Queue is empty");
+        }
+        return static_cast<Pasajero*>(front->getDato());
+    }
+
+    ~Cola() {
+        while (!estaVacia()) {
+            desencolar();
+        }
     }
 };
 
-#endif
+#endif // PASAJEROS_H

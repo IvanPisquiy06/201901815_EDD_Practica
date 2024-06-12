@@ -2,16 +2,8 @@
 #define LISTA_CIRCULAR_DOBLE_H
 
 #include "Avion.h"
+#include "Nodo.h"
 #include <iostream>
-
-class Nodo {
-public:
-    Avion* avion;
-    Nodo* siguiente;
-    Nodo* anterior;
-
-    Nodo(Avion* avion) : avion(avion), siguiente(nullptr), anterior(nullptr) {}
-};
 
 class ListaCircularDoble {
 private:
@@ -20,30 +12,43 @@ private:
 public:
     ListaCircularDoble() : cabeza(nullptr) {}
 
+    ~ListaCircularDoble() {
+        if (!cabeza) return;
+        Nodo* actual = static_cast<Nodo*>(cabeza->getSiguiente());
+        while (actual != cabeza) {
+            Nodo* siguiente = static_cast<Nodo*>(actual->getSiguiente());
+            delete actual;
+            actual = siguiente;
+        }
+        delete cabeza;
+        cabeza = nullptr;
+    }
+
     void insertar(Avion* avion) {
         Nodo* nuevo = new Nodo(avion);
         if (!cabeza) {
             cabeza = nuevo;
-            cabeza->siguiente = cabeza;
-            cabeza->anterior = cabeza;
+            nuevo->setSiguiente(nuevo);
+            nuevo->setAnterior(nuevo);
         } else {
-            Nodo* ultimo = cabeza->anterior;
-            nuevo->siguiente = cabeza;
-            nuevo->anterior = ultimo;
-            cabeza->anterior = nuevo;
-            ultimo->siguiente = nuevo;
+            Nodo* ultimo = static_cast<Nodo*>(cabeza->getAnterior());
+            ultimo->setSiguiente(nuevo);
+            nuevo->setAnterior(ultimo);
+            nuevo->setSiguiente(cabeza);
+            cabeza->setAnterior(nuevo);
         }
     }
 
-    void mostrar() {
+    void mostrar() const {
         if (!cabeza) {
             std::cout << "Lista vacía." << std::endl;
             return;
         }
         Nodo* actual = cabeza;
         do {
-            std::cout << "Avion: " << actual->avion->vuelo << ", Modelo: " << actual->avion->modelo << ", Estado: " << actual->avion->estado << std::endl;
-            actual = actual->siguiente;
+            Avion* avion = static_cast<Avion*>(actual->getDato());
+            std::cout << "Avion: " << avion->vuelo << ", Modelo: " << avion->modelo << ", Estado: " << avion->estado << std::endl;
+            actual = static_cast<Nodo*>(actual->getSiguiente());
         } while (actual != cabeza);
     }
 };
