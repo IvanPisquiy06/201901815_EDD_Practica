@@ -7,48 +7,48 @@
 
 class Cola {
 private:
-    Nodo* front;
-    Nodo* rear;
-    int size;
+    Nodo* frente;
+    Nodo* cola;
+    int tamaño;
 
 public:
-    Cola() : front(nullptr), rear(nullptr), size(0) {}
+    Cola() : frente(nullptr), cola(nullptr), tamaño(0) {}
 
     bool estaVacia() const {
-        return size == 0;
+        return tamaño == 0;
     }
 
     void encolar(Pasajero* pasajero) {
         Nodo* newNode = new Nodo(static_cast<void*>(pasajero));
-        if (rear == nullptr) {
-            front = rear = newNode;
+        if (cola == nullptr) {
+            frente = cola = newNode;
         } else {
-            rear->setSiguiente(newNode);
-            rear = newNode;
+            cola->setSiguiente(newNode);
+            cola = newNode;
         }
-        size++;
+        tamaño++;
     }
 
     Pasajero* desencolar() {
         if (estaVacia()) {
             throw std::out_of_range("Queue is empty");
         }
-        Nodo* temp = front;
-        Pasajero* pasajero = static_cast<Pasajero*>(front->getDato());
-        front = front->getSiguiente();
-        if (front == nullptr) {
-            rear = nullptr;
+        Nodo* temp = frente;
+        Pasajero* pasajero = static_cast<Pasajero*>(frente->getDato());
+        frente = frente->getSiguiente();
+        if (frente == nullptr) {
+            cola = nullptr;
         }
         delete temp;
-        size--;
+        tamaño--;
         return pasajero;
     }
 
     Pasajero* peekFront() const {
         if (estaVacia()) {
-            throw std::out_of_range("Queue is empty");
+            throw std::out_of_range("Cola vacía");
         }
-        return static_cast<Pasajero*>(front->getDato());
+        return static_cast<Pasajero*>(frente->getDato());
     }
 
     ~Cola() {

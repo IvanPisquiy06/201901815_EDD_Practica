@@ -1,29 +1,38 @@
 #ifndef PILA_H
 #define PILA_H
 
-#include <stack>
-#include "Pasajero.h"
+#include "Nodo.h"
 
 class Pila {
 private:
-    std::stack<Pasajero*> pila;
+    Nodo* cabeza;
 
 public:
+    Pila() : cabeza(nullptr) {}
+
+    ~Pila() {
+        while (cabeza != nullptr) {
+            desapilar(); 
+        }
+    }
+
     void apilar(Pasajero* pasajero) {
-        pila.push(pasajero);
+        Nodo* nuevoNodo = new Nodo(pasajero);
+        if (cabeza != nullptr) {
+            nuevoNodo->setSiguiente(cabeza);
+        }
+        cabeza = nuevoNodo;
     }
 
     Pasajero* desapilar() {
-        if (pila.empty()) {
-            return nullptr;
+        if (cabeza == nullptr) {
+            return nullptr; 
         }
-        Pasajero* pasajero = pila.top();
-        pila.pop();
+        Nodo* nodoAEliminar = cabeza;
+        Pasajero* pasajero = static_cast<Pasajero*>(nodoAEliminar->getDato());
+        cabeza = cabeza->getSiguiente();
+        delete nodoAEliminar;
         return pasajero;
-    }
-
-    bool estaVacia() {
-        return pila.empty();
     }
 };
 

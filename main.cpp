@@ -13,6 +13,7 @@ using json = nlohmann::json;
 
 ListaCircularDoble listaDisponibles;
 ListaCircularDoble listaMantenimiento;
+ListaCircularDoble listaPasajerosRegistrados;
 Cola colaPasajeros;
 Pila pilaEquipajes;
 
@@ -45,18 +46,42 @@ void cargarAviones(const std::string& archivo) {
     }
 }
 
+void cargarPasajeros(const std::string& archivo) {
+    std::ifstream ifs(archivo);
+    if (!ifs.is_open()) {
+        std::cerr << "Error opening file: " << archivo << std::endl;
+        return;
+    }
+    json obj;
+    ifs >> obj;
+
+    for (const auto& pasajero : obj) {
+        Pasajero* nuevoPasajero = new Pasajero(
+            pasajero["nombre"].get<std::string>(),
+            pasajero["nacionalidad"].get<std::string>(),
+            pasajero["numero_de_pasaporte"].get<std::string>(),
+            pasajero["vuelo"].get<std::string>(),
+            pasajero["asiento"].get<int>(),
+            pasajero["destino"].get<std::string>(),
+            pasajero["origen"].get<std::string>(),
+            pasajero["equipaje_facturado"].get<int>()
+        );
+        colaPasajeros.encolar(nuevoPasajero);
+    }
+}
+
 void mantenimiento(const std::string accion, const std::string& numero_de_registro) {
     Avion* avion = nullptr;
 
     if (accion == "Ingreso" && listaDisponibles.estaVacia() == false) {
-        avion = listaDisponibles.eliminar(numero_de_registro);
+        avion = listaDisponibles.eliminarAvion(numero_de_registro);
         if (avion) {
             avion->estado = "Mantenimiento";
             listaMantenimiento.insertar(avion);
             std::cout << "Avion " << numero_de_registro << " ingresado a la lista de mantenimiento." << std::endl;
         }
     } else if (accion == "Salida" && listaMantenimiento.estaVacia() == false) {
-        avion = listaMantenimiento.eliminar(numero_de_registro);
+        avion = listaMantenimiento.eliminarAvion(numero_de_registro);
         if (avion) {
             avion->estado = "Disponible";
             listaDisponibles.insertar(avion);
@@ -71,27 +96,11 @@ void mantenimiento(const std::string accion, const std::string& numero_de_regist
     }
 }
 
-void cargarPasajeros(const std::string& archivo) {
-    std::ifstream ifs(archivo);
-    if (!ifs.is_open()) {
-        std::cerr << "Error opening file: " << archivo << std::endl;
-        return;
-    }
-    json obj;
-    ifs >> obj;
-
-    for (const auto& pasajero : obj["pasajeros"]) {
-        Pasajero* nuevoPasajero = new Pasajero(
-            pasajero["nombre"].get<std::string>(),
-            pasajero["nacionalidad"].get<std::string>(),
-            pasajero["numero_de_pasaporte"].get<std::string>(),
-            pasajero["vuelo"].get<std::string>(),
-            pasajero["asiento"].get<int>(),
-            pasajero["destino"].get<std::string>(),
-            pasajero["origen"].get<std::string>(),
-            pasajero["equipaje_facturado"].get<int>()
-        );
-        colaPasajeros.encolar(nuevoPasajero);
+void ingresoEquipaje() {
+    Pasajero* pasajero = colaPasajeros.desencolar();
+    if (pasajero && pasajero->equipaje_facturado > 0) {
+        pilaEquipajes.apilar(pasajero);
+        std::cout << "Equipaje registrado para pasajero: " << pasajero->nombre << std::endl;
     }
 }
 
@@ -138,13 +147,7 @@ int main() {
                 listaMantenimiento.mostrar();
                 break;
             case 5:
-                while (!colaPasajeros.estaVacia()) {
-                    Pasajero* pasajero = colaPasajeros.desencolar();
-                    if (pasajero) {
-                        pilaEquipajes.apilar(pasajero);
-                        std::cout << "Equipaje registrado para pasajero: " << pasajero->nombre << std::endl;
-                    }
-                }
+                ingresoEquipaje();
                 break;
             case 6:
                 std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore leftover newline

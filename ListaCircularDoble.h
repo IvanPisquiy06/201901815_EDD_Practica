@@ -24,8 +24,8 @@ public:
         cabeza = nullptr;
     }
 
-    void insertar(Avion* avion) {
-        Nodo* nuevo = new Nodo(avion);
+    void insertar(void* dato) {
+        Nodo* nuevo = new Nodo(dato);
         if (!cabeza) {
             cabeza = nuevo;
             nuevo->setSiguiente(nuevo);
@@ -39,7 +39,7 @@ public:
         }
     }
 
-    Avion* eliminar(const std::string& numero_de_registro) {
+    Avion* eliminarAvion(const std::string& numero_de_registro) {
         if (!cabeza) return nullptr;
 
         Nodo* actual = cabeza;
