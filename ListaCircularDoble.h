@@ -2,6 +2,7 @@
 #define LISTA_CIRCULAR_DOBLE_H
 
 #include "Avion.h"
+#include "Pasajero.h"
 #include "Nodo.h"
 #include <iostream>
 
@@ -70,7 +71,7 @@ public:
         return avion;
     }
 
-    void mostrar() const {
+    void mostrarAviones() const {
         if (!cabeza) {
             std::cout << "Lista vacía." << std::endl;
             return;
@@ -79,6 +80,19 @@ public:
         do {
             Avion* avion = static_cast<Avion*>(actual->getDato());
             std::cout << "Numero de Registro: " << avion->numero_de_registro << ", Modelo: " << avion->modelo << ", Estado: " << avion->estado << std::endl;
+            actual = static_cast<Nodo*>(actual->getSiguiente());
+        } while (actual != cabeza);
+    }
+
+    void mostrarPasajeros() const {
+        if (!cabeza) {
+            std::cout << "Lista vacía." << std::endl;
+            return;
+        }
+        Nodo* actual = cabeza;
+        do {
+            Pasajero* pasajero = static_cast<Pasajero*>(actual->getDato());
+            std::cout << "Nombre: " << pasajero->nombre << ", vuelo: " << pasajero->vuelo << ", asiento: " << pasajero->asiento << ", Equipaje: " << pasajero->equipaje_facturado << std::endl;
             actual = static_cast<Nodo*>(actual->getSiguiente());
         } while (actual != cabeza);
     }

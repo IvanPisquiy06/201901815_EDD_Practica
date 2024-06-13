@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <filesystem>
 #include "libs/json.hpp"
@@ -102,16 +103,41 @@ void ingresoEquipaje() {
         pilaEquipajes.apilar(pasajero);
         std::cout << "Equipaje registrado para pasajero: " << pasajero->nombre << std::endl;
     }
+    if(pasajero){
+        listaPasajerosRegistrados.insertar(pasajero);
+    } else{
+        std::cout << "No hay pasajeros en la cola" << std::endl;
+    }
+}
+
+void ejecutarMovimientos(const std::string& archivo) {
+    std::ifstream file(archivo);
+    std::string line;
+
+    while (std::getline(file, line)) {
+        line.erase(std::remove(line.begin(), line.end(), ';'), line.end());
+        std::istringstream iss(line);
+        std::string action;
+        std::getline(iss, action, ',');
+
+        if (action == "IngresoEquipajes") {
+            ingresoEquipaje();
+        } else if (action == "MantenimientoAviones") {
+            std::string accion, numero_de_registro;
+            std::getline(iss, accion, ',');
+            std::getline(iss, numero_de_registro);
+            mantenimiento(accion, numero_de_registro);
+        }
+    }
 }
 
 void mostrarMenu() {
     std::cout << "1. Cargar aviones" << std::endl;
     std::cout << "2. Cargar pasajeros" << std::endl;
-    std::cout << "3. Mostrar aviones disponibles" << std::endl;
-    std::cout << "4. Mostrar aviones en mantenimiento" << std::endl;
-    std::cout << "5. Registrar equipajes" << std::endl;
-    std::cout << "6. Mantenimiento de aviones" << std::endl;
-    std::cout << "7. Salir" << std::endl;
+    std::cout << "3. Mostrar aviones" << std::endl;
+    std::cout << "4. Mostrar pasajeros" << std::endl;
+    std::cout << "5. Carga de movimientos" << std::endl;
+    std::cout << "6. Salir" << std::endl;
 }
 
 int main() {
@@ -140,25 +166,18 @@ int main() {
                 break;
             case 3:
                 std::cout << "Aviones disponibles:" << std::endl;
-                listaDisponibles.mostrar();
+                listaDisponibles.mostrarAviones();
+                std::cout << "Aviones en mantenimiento:" << std::endl;
+                listaMantenimiento.mostrarAviones();
                 break;
             case 4:
-                std::cout << "Aviones en mantenimiento:" << std::endl;
-                listaMantenimiento.mostrar();
+                std::cout << "Pasajeros registrados:" << std::endl;
+                listaPasajerosRegistrados.mostrarPasajeros();
                 break;
             case 5:
-                ingresoEquipaje();
+                ejecutarMovimientos("C:\\Proyectos\\U\\EDD\\practica\\archivos_prueba\\movimientos.txt");
                 break;
             case 6:
-                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore leftover newline
-                std::cout << "Ingrese el numero de registro del avion: ";
-                std::getline(std::cin, numero_de_registro);
-                std::cout << "Ingrese la accion (Ingreso/Salida): ";
-                std::getline(std::cin, accion);
-                mantenimiento(accion, numero_de_registro);
-                std::cout << "Mantenimiento completado" << std::endl;
-                break;
-            case 7:
                 return 0;
             default:
                 std::cout << "Opción no válida." << std::endl;
