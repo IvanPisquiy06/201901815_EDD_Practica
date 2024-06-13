@@ -1,0 +1,10 @@
+digraph ListaCircularDoble {
+    rankdir=LR;
+    "0x2087d5514c0" [label="Avion: N54321"];
+    "0x2087d5514c0" -> "0x2087d551650";
+    "0x2087d551650" -> "0x2087d5514c0" [constraint=false];
+    "0x2087d551650" [label="Avion: N67890"];
+    "0x2087d551650" -> "0x2087d713800";
+    "0x2087d713800" -> "0x2087d551650" [constraint=false];
+    "0x2087d713800" [label="Avion: N13579"];
+}

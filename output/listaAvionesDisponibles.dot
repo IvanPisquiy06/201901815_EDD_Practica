@@ -1,0 +1,10 @@
+digraph ListaCircularDoble {
+    rankdir=LR;
+    "0x2b94c8f14c0" [label="Avion: N54321\n Modelo:Airbus A320"];
+    "0x2b94c8f14c0" -> "0x2b94c8f1650";
+    "0x2b94c8f1650" -> "0x2b94c8f14c0" [constraint=false];
+    "0x2b94c8f1650" [label="Avion: N67890\n Modelo:Boeing 787"];
+    "0x2b94c8f1650" -> "0x2b94c7a3800";
+    "0x2b94c7a3800" -> "0x2b94c8f1650" [constraint=false];
+    "0x2b94c7a3800" [label="Avion: N13579\n Modelo:Boeing 777"];
+}

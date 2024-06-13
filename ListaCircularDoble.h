@@ -25,6 +25,8 @@ public:
         cabeza = nullptr;
     }
 
+    Nodo* getCabeza() const {return cabeza;}
+
     void insertar(void* dato) {
         Nodo* nuevo = new Nodo(dato);
         if (!cabeza) {
@@ -96,6 +98,45 @@ public:
             actual = static_cast<Nodo*>(actual->getSiguiente());
         } while (actual != cabeza);
     }
+
+    void reordenarPorVuelo() {
+    if (!cabeza || cabeza->getSiguiente() == cabeza) return;
+
+    bool wasSwapped;
+    do {
+        Nodo* current = cabeza;
+        wasSwapped = false;
+        do {
+            Nodo* next = static_cast<Nodo*>(current->getSiguiente());
+            Pasajero* currentPasajero = static_cast<Pasajero*>(current->getDato());
+            Pasajero* nextPasajero = static_cast<Pasajero*>(next->getDato());
+
+            // Extract numeric part of vuelo and compare
+            int currentVueloNum = std::stoi(currentPasajero->vuelo.substr(1));
+            int nextVueloNum = std::stoi(nextPasajero->vuelo.substr(1));
+
+            if (currentVueloNum > nextVueloNum) {
+                // Swap logic for a doubly linked list
+                Nodo* prev = static_cast<Nodo*>(current->getAnterior());
+                Nodo* nextNext = static_cast<Nodo*>(next->getSiguiente());
+
+                prev->setSiguiente(next);
+                next->setAnterior(prev);
+
+                next->setSiguiente(current);
+                current->setAnterior(next);
+
+                current->setSiguiente(nextNext);
+                nextNext->setAnterior(current);
+
+                if (current == cabeza) cabeza = next; // Update head if necessary
+                wasSwapped = true;
+            } else {
+                current = next;
+            }
+        } while (static_cast<Nodo*>(current->getSiguiente()) != cabeza);
+    } while (wasSwapped);
+}
 
     bool estaVacia() const {
         return cabeza == nullptr;

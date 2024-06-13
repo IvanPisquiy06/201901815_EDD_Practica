@@ -131,14 +131,127 @@ void ejecutarMovimientos(const std::string& archivo) {
     }
 }
 
+template<typename T>
+void generarReporteAviones(const T& lista, const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+
+    file << "digraph ListaCircularDoble {\n";
+    file << "    rankdir=LR;\n";
+
+    if (!lista.estaVacia()) {
+        Nodo* actual = lista.getCabeza();
+        Nodo* primero = actual;
+        Nodo* siguiente = static_cast<Nodo*>(primero->getSiguiente());
+        Nodo* ultimo = static_cast<Nodo*>(actual->getAnterior());
+        do {
+            Avion* avionData = static_cast<Avion*>(actual->getDato());
+
+            if (avionData) {
+                file << "    \"" << actual << "\" [label=\"Avion: " << avionData->numero_de_registro << "\\n Modelo:" << avionData->modelo << "\"];\n";
+            } 
+            if (actual->getSiguiente() != primero) {
+                file << "    \"" << actual << "\" -> \"" << actual->getSiguiente() << "\";\n";
+                file << "    \"" << actual->getSiguiente() << "\" -> \"" << actual << "\" [constraint=false];\n";
+            }
+
+            actual = siguiente;
+            siguiente = static_cast<Nodo*>(actual->getSiguiente());
+        } while (actual != primero);
+    }
+
+    file << "}\n";
+    file.close();
+}
+
+template<typename T>
+void generarReportePasajeros(const T& lista, const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+
+    file << "digraph ListaCircularDoble {\n";
+    file << "    rankdir=LR;\n";
+
+    if (!lista.estaVacia()) {
+        Nodo* current = lista.getCabeza();
+        Nodo* first = current;
+        do {
+            
+            Avion* avionData = static_cast<Avion*>(current->getDato());
+            if (avionData) {
+                file << "    \"" << current << "\" [label=\"Avion: " << avionData->numero_de_registro << "\"];\n";
+            } else {
+
+                Pasajero* pasajeroData = static_cast<Pasajero*>(current->getDato());
+                file << "    \"" << current << "\" [label=\"Pasajero: " << pasajeroData->nombre << "\"];\n";
+            }
+
+            if (current->getSiguiente() != first) {
+                file << "    \"" << current << "\" -> \"" << current->getSiguiente() << "\";\n";
+                file << "    \"" << current->getSiguiente() << "\" -> \"" << current << "\" [constraint=false];\n";
+            }
+
+            current = static_cast<Nodo*>(current->getSiguiente());
+        } while (current != first);
+    }
+
+    file << "}\n";
+    file.close();
+}
+
 void mostrarMenu() {
     std::cout << "1. Cargar aviones" << std::endl;
     std::cout << "2. Cargar pasajeros" << std::endl;
     std::cout << "3. Mostrar aviones" << std::endl;
     std::cout << "4. Mostrar pasajeros" << std::endl;
     std::cout << "5. Carga de movimientos" << std::endl;
+    std::cout << "6. Generar reporte" << std::endl;
+    std::cout << "7. Salir" << std::endl;
+}
+
+void mostrarMenuReportes() {
+    std::cout << "1. Aviones Disponibles" << std::endl;
+    std::cout << "2. Aviones en mantenimiento" << std::endl;
+    std::cout << "3. Cola de Registro" << std::endl;
+    std::cout << "4. Pila de Equipaje" << std::endl;
+    std::cout << "5. Lista de pasajeros" << std::endl;
     std::cout << "6. Salir" << std::endl;
 }
+
+/* void menuReportes(){
+    int opcion;
+    while (true) {
+        mostrarMenuReportes();
+        std::cin >> opcion;
+        switch (opcion) {
+            case 1:
+                generarReporteAviones(listaDisponibles, "listaAvionesDisponibles.dot");
+                break;
+            case 2:
+                generarReporteAviones(listaMantenimiento, "listaAvionesMantenimiento.dot");
+                break;
+            case 3:
+                colaPasajeros.mostrarPasajeros();
+                break;
+            case 4:
+                pilaEquipajes.mostrarPasajeros();
+                break;
+            case 5:
+                listaPasajerosRegistrados.mostrarPasajeros();
+                break;
+            case 6:
+                return;
+            default:
+                std::cout << "Opción no válida." << std::endl;
+        }
+    }
+} */
 
 int main() {
     int opcion;
@@ -178,6 +291,11 @@ int main() {
                 ejecutarMovimientos("C:\\Proyectos\\U\\EDD\\practica\\archivos_prueba\\movimientos.txt");
                 break;
             case 6:
+                generarReporteAviones(listaDisponibles, "listaAvionesDisponibles.dot");
+                /* mostrarMenuReportes();
+                menuReportes(); */
+                break;
+            case 7:
                 return 0;
             default:
                 std::cout << "Opción no válida." << std::endl;
