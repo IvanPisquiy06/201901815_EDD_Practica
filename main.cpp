@@ -45,6 +45,32 @@ void cargarAviones(const std::string& archivo) {
     }
 }
 
+void mantenimiento(const std::string accion, const std::string& numero_de_registro) {
+    Avion* avion = nullptr;
+
+    if (accion == "Ingreso" && listaDisponibles.estaVacia() == false) {
+        avion = listaDisponibles.eliminar(numero_de_registro);
+        if (avion) {
+            avion->estado = "Mantenimiento";
+            listaMantenimiento.insertar(avion);
+            std::cout << "Avion " << numero_de_registro << " ingresado a la lista de mantenimiento." << std::endl;
+        }
+    } else if (accion == "Salida" && listaMantenimiento.estaVacia() == false) {
+        avion = listaMantenimiento.eliminar(numero_de_registro);
+        if (avion) {
+            avion->estado = "Disponible";
+            listaDisponibles.insertar(avion);
+            std::cout << "Avion " << numero_de_registro << " salio de la lista de mantenimiento." << std::endl;
+        }
+    } else {
+        std::cout << "Accion no valida o avion no encontrado." << std::endl;
+    }
+
+    if (!avion) {
+        std::cout << "Avion " << numero_de_registro << " no encontrado." << std::endl;
+    }
+}
+
 void cargarPasajeros(const std::string& archivo) {
     std::ifstream ifs(archivo);
     if (!ifs.is_open()) {
@@ -75,12 +101,15 @@ void mostrarMenu() {
     std::cout << "3. Mostrar aviones disponibles" << std::endl;
     std::cout << "4. Mostrar aviones en mantenimiento" << std::endl;
     std::cout << "5. Registrar equipajes" << std::endl;
-    std::cout << "6. Salir" << std::endl;
+    std::cout << "6. Mantenimiento de aviones" << std::endl;
+    std::cout << "7. Salir" << std::endl;
 }
 
 int main() {
     int opcion;
     std::string archivo;
+    std::string numero_de_registro;
+    std::string accion;
 
     while (true) {
         mostrarMenu();
@@ -118,6 +147,15 @@ int main() {
                 }
                 break;
             case 6:
+                std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); // Ignore leftover newline
+                std::cout << "Ingrese el numero de registro del avion: ";
+                std::getline(std::cin, numero_de_registro);
+                std::cout << "Ingrese la accion (Ingreso/Salida): ";
+                std::getline(std::cin, accion);
+                mantenimiento(accion, numero_de_registro);
+                std::cout << "Mantenimiento completado" << std::endl;
+                break;
+            case 7:
                 return 0;
             default:
                 std::cout << "Opción no válida." << std::endl;

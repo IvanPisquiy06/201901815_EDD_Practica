@@ -39,6 +39,37 @@ public:
         }
     }
 
+    Avion* eliminar(const std::string& numero_de_registro) {
+        if (!cabeza) return nullptr;
+
+        Nodo* actual = cabeza;
+        Nodo* anterior = nullptr;
+        bool encontrado = false;
+
+        do {
+            Avion* avion = static_cast<Avion*>(actual->getDato());
+            if (avion->numero_de_registro == numero_de_registro) {
+                std::cout << "Avion encontrado" << std::endl;
+                encontrado = true;
+            }
+            anterior = actual;
+            actual = static_cast<Nodo*>(actual->getSiguiente());
+        } while (actual != cabeza);
+
+        if (!encontrado) return nullptr;
+
+        if (actual == cabeza && actual->getSiguiente() == cabeza) {
+            cabeza = nullptr;
+        } else {
+            if (actual == cabeza) cabeza = static_cast<Nodo*>(actual->getSiguiente());
+            anterior->setSiguiente(actual->getSiguiente());
+            static_cast<Nodo*>(actual->getSiguiente())->setAnterior(anterior);
+        }
+        Avion* avion = static_cast<Avion*>(actual->getDato());
+        delete actual;
+        return avion;
+    }
+
     void mostrar() const {
         if (!cabeza) {
             std::cout << "Lista vacía." << std::endl;
@@ -47,10 +78,14 @@ public:
         Nodo* actual = cabeza;
         do {
             Avion* avion = static_cast<Avion*>(actual->getDato());
-            std::cout << "Avion: " << avion->vuelo << ", Modelo: " << avion->modelo << ", Estado: " << avion->estado << std::endl;
+            std::cout << "Numero de Registro: " << avion->numero_de_registro << ", Modelo: " << avion->modelo << ", Estado: " << avion->estado << std::endl;
             actual = static_cast<Nodo*>(actual->getSiguiente());
         } while (actual != cabeza);
     }
+
+    bool estaVacia() const {
+        return cabeza == nullptr;
+    }
 };
 
-#endif
+#endif // LISTA_CIRCULAR_DOBLE_H
