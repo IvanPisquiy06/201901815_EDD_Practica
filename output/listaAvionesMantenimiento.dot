@@ -1,0 +1,11 @@
+digraph ListaCircularDoble {
+    rankdir=LR;
+    Primero [shape=plaintext, label="Primero"];    Ultimo [shape=plaintext, label="Último"];    "0x2743b9239d0" [label="Avion: N24680\n Estado:Mantenimiento"];
+    "0x2743b9239d0" -> "0x2743b923b10";
+    "0x2743b923b10" -> "0x2743b9239d0" [constraint=false];
+    "0x2743b923b10" [label="Avion: N12345\n Estado:Mantenimiento"];
+    "0x2743b9239d0" -> "0x2743b923b10" [constraint=false];
+    "0x2743b923b10" -> "0x2743b9239d0" [constraint=false];
+    Primero -> "0x2743b9239d0" [constraint=false];
+    Ultimo -> "0x2743b923b10" [constraint=false];
+}

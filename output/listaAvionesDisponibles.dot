@@ -1,14 +1,14 @@
 digraph ListaCircularDoble {
     rankdir=LR;
-    Primero [shape=plaintext, label="Primero"];    Ultimo [shape=plaintext, label="Último"];    "0x1eefcc514c0" [label="Avion: N54321\n Estado:Disponible"];
-    "0x1eefcc514c0" -> "0x1eefcc51650";
-    "0x1eefcc51650" -> "0x1eefcc514c0" [constraint=false];
-    "0x1eefcc51650" [label="Avion: N67890\n Estado:Disponible"];
-    "0x1eefcc51650" -> "0x1eefcf738e0";
-    "0x1eefcf738e0" -> "0x1eefcc51650" [constraint=false];
-    "0x1eefcf738e0" [label="Avion: N13579\n Estado:Disponible"];
-    "0x1eefcc514c0" -> "0x1eefcf738e0" [constraint=false];
-    "0x1eefcf738e0" -> "0x1eefcc514c0" [constraint=false];
-    Primero -> "0x1eefcc514c0" [constraint=false];
-    Ultimo -> "0x1eefcf738e0" [constraint=false];
+    Primero [shape=plaintext, label="Primero"];    Ultimo [shape=plaintext, label="Último"];    "0x2743b6b1510" [label="Avion: N54321\n Estado:Disponible"];
+    "0x2743b6b1510" -> "0x2743b6b16a0";
+    "0x2743b6b16a0" -> "0x2743b6b1510" [constraint=false];
+    "0x2743b6b16a0" [label="Avion: N67890\n Estado:Disponible"];
+    "0x2743b6b16a0" -> "0x2743b923970";
+    "0x2743b923970" -> "0x2743b6b16a0" [constraint=false];
+    "0x2743b923970" [label="Avion: N13579\n Estado:Disponible"];
+    "0x2743b6b1510" -> "0x2743b923970" [constraint=false];
+    "0x2743b923970" -> "0x2743b6b1510" [constraint=false];
+    Primero -> "0x2743b6b1510" [constraint=false];
+    Ultimo -> "0x2743b923970" [constraint=false];
 }

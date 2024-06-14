@@ -100,43 +100,43 @@ public:
     }
 
     void reordenarPorVuelo() {
-    if (!cabeza || cabeza->getSiguiente() == cabeza) return;
+        if (!cabeza || cabeza->getSiguiente() == cabeza) return;
 
-    bool wasSwapped;
-    do {
-        Nodo* current = cabeza;
-        wasSwapped = false;
+        bool wasSwapped;
         do {
-            Nodo* next = static_cast<Nodo*>(current->getSiguiente());
-            Pasajero* currentPasajero = static_cast<Pasajero*>(current->getDato());
-            Pasajero* nextPasajero = static_cast<Pasajero*>(next->getDato());
+            Nodo* current = cabeza;
+            wasSwapped = false;
+            do {
+                Nodo* next = static_cast<Nodo*>(current->getSiguiente());
+                Pasajero* currentPasajero = static_cast<Pasajero*>(current->getDato());
+                Pasajero* nextPasajero = static_cast<Pasajero*>(next->getDato());
 
-            // Extract numeric part of vuelo and compare
-            int currentVueloNum = std::stoi(currentPasajero->vuelo.substr(1));
-            int nextVueloNum = std::stoi(nextPasajero->vuelo.substr(1));
+                
+                int currentVueloNum = std::stoi(currentPasajero->vuelo.substr(1));
+                int nextVueloNum = std::stoi(nextPasajero->vuelo.substr(1));
 
-            if (currentVueloNum > nextVueloNum) {
-                // Swap logic for a doubly linked list
-                Nodo* prev = static_cast<Nodo*>(current->getAnterior());
-                Nodo* nextNext = static_cast<Nodo*>(next->getSiguiente());
+                if (currentVueloNum > nextVueloNum) {
+                    
+                    Nodo* prev = static_cast<Nodo*>(current->getAnterior());
+                    Nodo* nextNext = static_cast<Nodo*>(next->getSiguiente());
 
-                prev->setSiguiente(next);
-                next->setAnterior(prev);
+                    prev->setSiguiente(next);
+                    next->setAnterior(prev);
 
-                next->setSiguiente(current);
-                current->setAnterior(next);
+                    next->setSiguiente(current);
+                    current->setAnterior(next);
 
-                current->setSiguiente(nextNext);
-                nextNext->setAnterior(current);
+                    current->setSiguiente(nextNext);
+                    nextNext->setAnterior(current);
 
-                if (current == cabeza) cabeza = next; // Update head if necessary
-                wasSwapped = true;
-            } else {
-                current = next;
-            }
-        } while (static_cast<Nodo*>(current->getSiguiente()) != cabeza);
-    } while (wasSwapped);
-}
+                    if (current == cabeza) cabeza = next; 
+                    wasSwapped = true;
+                } else {
+                    current = next;
+                }
+            } while (static_cast<Nodo*>(current->getSiguiente()) != cabeza);
+        } while (wasSwapped);
+    }
 
     bool estaVacia() const {
         return cabeza == nullptr;

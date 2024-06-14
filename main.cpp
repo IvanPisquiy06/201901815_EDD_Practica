@@ -105,6 +105,7 @@ void ingresoEquipaje() {
     }
     if(pasajero){
         listaPasajerosRegistrados.insertar(pasajero);
+        listaPasajerosRegistrados.reordenarPorVuelo();
     } else{
         std::cout << "No hay pasajeros en la cola" << std::endl;
     }
@@ -222,6 +223,11 @@ void generarReporteCola(const Cola& cola, const std::string& filename) {
 
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+
+    if(cola.estaVacia()){
+        std::cout << "La cola esta vacia" << std::endl;
         return;
     }
 
@@ -360,16 +366,18 @@ int main() {
                 std::cout << "Ingrese el nombre del archivo de aviones: ";
                 std::cin >> archivo;
                 archivo_prueba = "C:\\Proyectos\\U\\EDD\\practica\\archivos_prueba\\aviones.json";
-                cargarAviones(archivo_prueba);
+                cargarAviones(archivo);
                 break;
             case 2:
                 std::cout << "Ingrese el nombre del archivo de pasajeros: ";
                 std::cin >> archivo;
                 archivo_prueba = "C:\\Proyectos\\U\\EDD\\practica\\archivos_prueba\\pasajeros.json";
-                cargarPasajeros(archivo_prueba);
+                cargarPasajeros(archivo);
                 break;
             case 3:
-                ejecutarMovimientos("C:\\Proyectos\\U\\EDD\\practica\\archivos_prueba\\movimientos.txt");
+                std::cout << "Ingrese el nombre del archivo de movimientos: ";
+                std::cin >> archivo;
+                ejecutarMovimientos(archivo);
                 break;
             case 4:
                 std::cout << "Pasajeros registrados:" << std::endl;
