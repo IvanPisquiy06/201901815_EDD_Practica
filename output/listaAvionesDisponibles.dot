@@ -1,10 +1,14 @@
 digraph ListaCircularDoble {
     rankdir=LR;
-    "0x2b94c8f14c0" [label="Avion: N54321\n Modelo:Airbus A320"];
-    "0x2b94c8f14c0" -> "0x2b94c8f1650";
-    "0x2b94c8f1650" -> "0x2b94c8f14c0" [constraint=false];
-    "0x2b94c8f1650" [label="Avion: N67890\n Modelo:Boeing 787"];
-    "0x2b94c8f1650" -> "0x2b94c7a3800";
-    "0x2b94c7a3800" -> "0x2b94c8f1650" [constraint=false];
-    "0x2b94c7a3800" [label="Avion: N13579\n Modelo:Boeing 777"];
+    Primero [shape=plaintext, label="Primero"];    Ultimo [shape=plaintext, label="Último"];    "0x1eefcc514c0" [label="Avion: N54321\n Estado:Disponible"];
+    "0x1eefcc514c0" -> "0x1eefcc51650";
+    "0x1eefcc51650" -> "0x1eefcc514c0" [constraint=false];
+    "0x1eefcc51650" [label="Avion: N67890\n Estado:Disponible"];
+    "0x1eefcc51650" -> "0x1eefcf738e0";
+    "0x1eefcf738e0" -> "0x1eefcc51650" [constraint=false];
+    "0x1eefcf738e0" [label="Avion: N13579\n Estado:Disponible"];
+    "0x1eefcc514c0" -> "0x1eefcf738e0" [constraint=false];
+    "0x1eefcf738e0" -> "0x1eefcc514c0" [constraint=false];
+    Primero -> "0x1eefcc514c0" [constraint=false];
+    Ultimo -> "0x1eefcf738e0" [constraint=false];
 }

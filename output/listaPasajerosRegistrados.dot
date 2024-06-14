@@ -1,0 +1,13 @@
+digraph G {
+    rankdir=LR;
+    "0x250d4853b60" [label="Pasajero: John Doe\nPasaporte: P12345678"];
+    "0x250d4853b60" -> "0x250d48539e0";
+    "0x250d48539e0" [label="Pasajero: Jane Smith\nPasaporte: P98765432"];
+    "0x250d48539e0" -> "0x250d4853a80";
+    "0x250d4853a80" [label="Pasajero: Carlos Rodríguez\nPasaporte: P45678901"];
+    "0x250d4853a80" -> "0x250d4853960";
+    "0x250d4853960" [label="Pasajero: Liu Wei\nPasaporte: P23456789"];
+    "0x250d4853960" -> "0x250d4853ac0";
+    "0x250d4853ac0" [label="Pasajero: Ahmed Al-Farsi\nPasaporte: P34567890"];
+    "0x250d4853ac0" -> "0x250d4853b60";
+}

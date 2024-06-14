@@ -34,6 +34,10 @@ public:
         delete nodoAEliminar;
         return pasajero;
     }
+
+    Nodo* getCabeza() const {
+        return cabeza;
+    }
 };
 
 #endif // PILA_H

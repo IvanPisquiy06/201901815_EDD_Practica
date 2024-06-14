@@ -1,0 +1,10 @@
+digraph G {
+    rankdir=LR;
+    "0" [label="Nombre: Ahmed Al-Farsi\nEquipaje: 3"];
+    "0" -> "1";
+    "1" [label="Nombre: Liu Wei\nEquipaje: 1"];
+    "1" -> "2";
+    "2" [label="Nombre: Jane Smith\nEquipaje: 1"];
+    "2" -> "3";
+    "3" [label="Nombre: John Doe\nEquipaje: 2"];
+}

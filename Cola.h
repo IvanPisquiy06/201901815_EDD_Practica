@@ -44,11 +44,11 @@ public:
         return pasajero;
     }
 
-    Pasajero* peekFront() const {
+    Nodo* getPrimero() const {
         if (estaVacia()) {
             throw std::out_of_range("Cola vacía");
         }
-        return static_cast<Pasajero*>(frente->getDato());
+        return frente;
     }
 
     ~Cola() {

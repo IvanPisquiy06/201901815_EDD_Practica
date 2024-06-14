@@ -133,7 +133,9 @@ void ejecutarMovimientos(const std::string& archivo) {
 
 template<typename T>
 void generarReporteAviones(const T& lista, const std::string& filename) {
-    std::ofstream file(filename);
+    std::string dotFileName = filename + ".dot";
+    std::ofstream file(dotFileName);
+    
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filename << std::endl;
         return;
@@ -141,6 +143,8 @@ void generarReporteAviones(const T& lista, const std::string& filename) {
 
     file << "digraph ListaCircularDoble {\n";
     file << "    rankdir=LR;\n";
+    file << "    Primero [shape=plaintext, label=\"Primero\"];";
+    file << "    Ultimo [shape=plaintext, label=\"Último\"];";
 
     if (!lista.estaVacia()) {
         Nodo* actual = lista.getCabeza();
@@ -151,7 +155,7 @@ void generarReporteAviones(const T& lista, const std::string& filename) {
             Avion* avionData = static_cast<Avion*>(actual->getDato());
 
             if (avionData) {
-                file << "    \"" << actual << "\" [label=\"Avion: " << avionData->numero_de_registro << "\\n Modelo:" << avionData->modelo << "\"];\n";
+                file << "    \"" << actual << "\" [label=\"Avion: " << avionData->numero_de_registro << "\\n Estado:" << avionData->estado << "\"];\n";
             } 
             if (actual->getSiguiente() != primero) {
                 file << "    \"" << actual << "\" -> \"" << actual->getSiguiente() << "\";\n";
@@ -161,58 +165,145 @@ void generarReporteAviones(const T& lista, const std::string& filename) {
             actual = siguiente;
             siguiente = static_cast<Nodo*>(actual->getSiguiente());
         } while (actual != primero);
+
+        file << "    \"" << primero << "\" -> \"" << ultimo << "\" [constraint=false];\n";
+        file << "    \"" << ultimo << "\" -> \"" << primero << "\" [constraint=false];\n";
+        file << "    Primero -> \"" << primero << "\" [constraint=false];\n";
+        file << "    Ultimo -> \"" << ultimo << "\" [constraint=false];\n";
     }
 
     file << "}\n";
     file.close();
+
+    std::string command = "dot -Tpng " + dotFileName + " -o " + filename + ".png";
+    system(command.c_str());
 }
 
 template<typename T>
-void generarReportePasajeros(const T& lista, const std::string& filename) {
-    std::ofstream file(filename);
+void generarReportePasajerosDoble(const T& container, const std::string& filename) {
+    std::string dotFileName = filename + ".dot";
+    std::ofstream file(dotFileName);
+
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << filename << std::endl;
         return;
     }
 
-    file << "digraph ListaCircularDoble {\n";
+    file << "digraph G {\n";
     file << "    rankdir=LR;\n";
 
-    if (!lista.estaVacia()) {
-        Nodo* current = lista.getCabeza();
-        Nodo* first = current;
+    if (!container.estaVacia()) {
+        auto current = container.getCabeza();
         do {
-            
-            Avion* avionData = static_cast<Avion*>(current->getDato());
-            if (avionData) {
-                file << "    \"" << current << "\" [label=\"Avion: " << avionData->numero_de_registro << "\"];\n";
-            } else {
-
-                Pasajero* pasajeroData = static_cast<Pasajero*>(current->getDato());
-                file << "    \"" << current << "\" [label=\"Pasajero: " << pasajeroData->nombre << "\"];\n";
+            Pasajero* pasajeroData = static_cast<Pasajero*>(current->getDato());
+            if (pasajeroData) {
+                file << "    \"" << current << "\" [label=\"Pasajero: " << pasajeroData->nombre 
+                     << "\\nPasaporte: " << pasajeroData->numero_de_pasaporte << "\"];\n";
             }
 
-            if (current->getSiguiente() != first) {
+            if (current->getSiguiente() != nullptr) {
                 file << "    \"" << current << "\" -> \"" << current->getSiguiente() << "\";\n";
-                file << "    \"" << current->getSiguiente() << "\" -> \"" << current << "\" [constraint=false];\n";
             }
 
-            current = static_cast<Nodo*>(current->getSiguiente());
-        } while (current != first);
+            current = current->getSiguiente();
+        } while (current != nullptr && current != container.getCabeza());
     }
 
     file << "}\n";
     file.close();
+
+    std::string command = "dot -Tpng " + dotFileName + " -o " + filename + ".png";
+    system(command.c_str());
+}
+
+void generarReporteCola(const Cola& cola, const std::string& filename) {
+    std::string dotFileName = filename + ".dot";
+    std::ofstream file(dotFileName);
+
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+
+    file << "digraph G {\n";
+    file << "    rankdir=LR;\n";
+    file << "    head;\n";
+    file << "    tail;\n";
+
+    auto current = cola.getPrimero();
+    int index = 0;
+    while (current != nullptr) {
+        Pasajero* pasajeroData = static_cast<Pasajero*>(current->getDato());
+        if(index == 0){
+            file << index << "-> head \"" << "\";\n";
+        }
+        if (pasajeroData) {
+            file << "    \"" << index << "\" [label=\"Pasajero: " << pasajeroData->nombre 
+                 << "\\nPasaporte: " << pasajeroData->numero_de_pasaporte << "\"];\n";
+        }
+
+        if (current->getSiguiente() != nullptr) {
+            file << "    \"" << index + 1 << "\" -> \"" << index << "\";\n";
+        } else {
+            file << "    \"" << "\" tail ->" << index << ";\n";
+        }
+
+        current = current->getSiguiente();
+        index++;
+    }
+
+    file << "}\n";
+    file.close();
+
+    std::string command = "dot -Tpng " + dotFileName + " -o " + filename + ".png";
+    system(command.c_str());
+}
+
+void generarReportePila(const Pila& pila, const std::string& filename) {
+    std::string dotFileName = filename + ".dot";
+    std::ofstream file(dotFileName);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << filename << std::endl;
+        return;
+    }
+
+    file << "digraph G {\n";
+    file << "    rankdir=LR;\n";
+    file << "    Top;\n";
+
+    int index = 0;
+    auto current = pila.getCabeza();
+    while (current != nullptr) {
+        Pasajero* pasajeroData = static_cast<Pasajero*>(current->getDato());
+        if (pasajeroData) {
+            file << "    \"" << index << "\" [label=\"Nombre: " << pasajeroData->nombre 
+                 << "\\nEquipaje: " << pasajeroData->equipaje_facturado << "\"];\n";
+        }
+
+        if (current->getSiguiente() != nullptr) {
+            file << "    \"" << index << "\" -> \"" << index + 1 << "\";\n";
+        } else {
+            file << "    \"" << "\" -> Top\"" << index << "\";\n";
+        }
+
+        current = current->getSiguiente();
+        index++;
+    }
+
+    file << "}\n";
+    file.close();
+
+    std::string command = "dot -Tpng " + dotFileName + " -o " + filename + ".png";
+    system(command.c_str());
 }
 
 void mostrarMenu() {
     std::cout << "1. Cargar aviones" << std::endl;
     std::cout << "2. Cargar pasajeros" << std::endl;
-    std::cout << "3. Mostrar aviones" << std::endl;
-    std::cout << "4. Mostrar pasajeros" << std::endl;
-    std::cout << "5. Carga de movimientos" << std::endl;
-    std::cout << "6. Generar reporte" << std::endl;
-    std::cout << "7. Salir" << std::endl;
+    std::cout << "3. Carga de movimientos" << std::endl;
+    std::cout << "4. Consultar pasajeros" << std::endl;
+    std::cout << "5. Generar reporte" << std::endl;
+    std::cout << "6. Salir" << std::endl;
 }
 
 void mostrarMenuReportes() {
@@ -224,26 +315,26 @@ void mostrarMenuReportes() {
     std::cout << "6. Salir" << std::endl;
 }
 
-/* void menuReportes(){
+void menuReportes(){
     int opcion;
     while (true) {
         mostrarMenuReportes();
         std::cin >> opcion;
         switch (opcion) {
             case 1:
-                generarReporteAviones(listaDisponibles, "listaAvionesDisponibles.dot");
+                generarReporteAviones(listaDisponibles, "listaAvionesDisponibles");
                 break;
             case 2:
-                generarReporteAviones(listaMantenimiento, "listaAvionesMantenimiento.dot");
+                generarReporteAviones(listaMantenimiento, "listaAvionesMantenimiento");
                 break;
             case 3:
-                colaPasajeros.mostrarPasajeros();
+                generarReporteCola(colaPasajeros, "colaPasajeros");
                 break;
             case 4:
-                pilaEquipajes.mostrarPasajeros();
+                generarReportePila(pilaEquipajes, "pilaEquipajes");
                 break;
             case 5:
-                listaPasajerosRegistrados.mostrarPasajeros();
+                generarReportePasajerosDoble(listaPasajerosRegistrados, "listaPasajerosRegistrados");
                 break;
             case 6:
                 return;
@@ -251,7 +342,7 @@ void mostrarMenuReportes() {
                 std::cout << "Opción no válida." << std::endl;
         }
     }
-} */
+}
 
 int main() {
     int opcion;
@@ -278,24 +369,16 @@ int main() {
                 cargarPasajeros(archivo_prueba);
                 break;
             case 3:
-                std::cout << "Aviones disponibles:" << std::endl;
-                listaDisponibles.mostrarAviones();
-                std::cout << "Aviones en mantenimiento:" << std::endl;
-                listaMantenimiento.mostrarAviones();
+                ejecutarMovimientos("C:\\Proyectos\\U\\EDD\\practica\\archivos_prueba\\movimientos.txt");
                 break;
             case 4:
                 std::cout << "Pasajeros registrados:" << std::endl;
                 listaPasajerosRegistrados.mostrarPasajeros();
                 break;
             case 5:
-                ejecutarMovimientos("C:\\Proyectos\\U\\EDD\\practica\\archivos_prueba\\movimientos.txt");
+                menuReportes();
                 break;
             case 6:
-                generarReporteAviones(listaDisponibles, "listaAvionesDisponibles.dot");
-                /* mostrarMenuReportes();
-                menuReportes(); */
-                break;
-            case 7:
                 return 0;
             default:
                 std::cout << "Opción no válida." << std::endl;
